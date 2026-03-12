@@ -1,199 +1,363 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1 TL Peaky Blinders - Yazı Tura</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Roboto:wght@300;500&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peaky Blinders Yazı Tura</title>
 
-        body {
-            background-color: #1a1a1a;
-            color: #e0e0e0;
-            font-family: 'Roboto', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Roboto:wght@300;500&display=swap');
 
-        h1 {
-            font-family: 'Cinzel', serif;
-            color: #d4af37;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
-            text-align: center;
-        }
+body{
+    background:
+        radial-gradient(circle at top, rgba(80,80,80,0.15), transparent 35%),
+        linear-gradient(to bottom, #1b1b1b, #111);
+    color:#e0e0e0;
+    font-family:'Roboto',sans-serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    height:100vh;
+    margin:0;
+    overflow:hidden;
+}
 
-        .rules {
-            background: rgba(0,0,0,0.5);
-            padding: 10px 20px;
-            border-radius: 8px;
-            margin-bottom: 40px;
-            text-align: center;
-            border: 1px solid #444;
-        }
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:linear-gradient(to bottom, rgba(255,255,255,0.02), rgba(0,0,0,0.18));
+    pointer-events:none;
+}
 
-        .game-container {
-            display: flex;
-            gap: 50px;
-            perspective: 1000px;
-        }
+h1{
+    font-family:'Cinzel',serif;
+    color:#d4af37;
+    letter-spacing:3px;
+    margin-bottom:10px;
+    text-shadow:2px 2px 10px rgba(0,0,0,0.9);
+    text-align:center;
+}
 
-        .coin {
-            width: 150px;
-            height: 150px;
-            position: relative;
-            transform-style: preserve-3d;
-            /* Başlangıçta transition yok, JS ile yöneteceğiz */
-        }
+.rules{
+    background:rgba(0,0,0,0.58);
+    padding:10px 20px;
+    border-radius:8px;
+    margin-bottom:40px;
+    border:1px solid #444;
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,0.35);
+}
 
-        .coin img {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            backface-visibility: hidden;
-            border-radius: 50%;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
-        }
+.game-container{
+    display:flex;
+    gap:70px;
+    perspective:1400px;
+    align-items:center;
+    justify-content:center;
+}
 
-        /* TURA (ÖN YÜZ) - Atatürk */
-        .heads {
-            transform: rotateY(0deg);
-        }
+.coin-wrap{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:170px;
+    height:210px;
+    filter:drop-shadow(0 18px 18px rgba(0,0,0,0.45));
+}
 
-        /* YAZI (ARKA YÜZ) - 1 TL Yazısı */
-        .tails {
-            transform: rotateY(180deg);
-        }
+.coin-wrap.flipping{
+    animation:coinRise 6s cubic-bezier(.15,.75,.12,1) both;
+}
 
-        button {
-            margin-top: 50px;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            background: linear-gradient(45deg, #800000, #b30000);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-family: 'Cinzel', serif;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
+.coin{
+    width:150px;
+    height:150px;
+    position:relative;
+    transform-style:preserve-3d;
+    will-change:transform;
+}
 
-        button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.7);
-        }
+.coin img{
+    width:100%;
+    height:100%;
+    position:absolute;
+    backface-visibility:hidden;
+    border-radius:50%;
+    box-shadow:
+        0 0 20px rgba(212,175,55,0.30),
+        inset 0 0 8px rgba(255,255,255,0.12);
+}
 
-        button:disabled {
-            background: #555;
-            cursor: not-allowed;
-            transform: none;
-        }
+.heads{ transform:rotateY(0deg); }
+.tails{ transform:rotateY(180deg); }
 
-        #result {
-            margin-top: 30px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            min-height: 1.5em;
-            color: #fff;
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
-        }
+.coin-glow{
+    position:absolute;
+    bottom:5px;
+    width:110px;
+    height:18px;
+    background:radial-gradient(circle, rgba(212,175,55,0.30), rgba(0,0,0,0));
+    filter:blur(8px);
+    opacity:0.35;
+    transition:opacity 0.4s ease, transform 0.4s ease;
+    pointer-events:none;
+}
 
-        .win-msg {
-            color: #d4af37;
-        }
-    </style>
+.coin-wrap.flipping .coin-glow{
+    opacity:0.7;
+    transform:scale(1.25);
+}
+
+button{
+    margin-top:50px;
+    padding:15px 40px;
+    font-size:1.2rem;
+    background:linear-gradient(45deg,#6f0000,#a30000);
+    color:white;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-family:'Cinzel',serif;
+    box-shadow:0 5px 15px rgba(0,0,0,0.5);
+    transition:transform 0.2s, box-shadow 0.2s, filter 0.2s;
+}
+
+button:hover{
+    transform:scale(1.07);
+    box-shadow:0 10px 22px rgba(0,0,0,0.65);
+    filter:brightness(1.06);
+}
+
+button:disabled{
+    background:#555;
+    cursor:not-allowed;
+    transform:none;
+    filter:none;
+}
+
+#result{
+    margin-top:30px;
+    font-size:1.6rem;
+    font-weight:bold;
+    min-height:1.5em;
+    text-align:center;
+    text-shadow:0 0 12px rgba(255,255,255,0.08);
+}
+
+.result-hit{
+    animation:resultHit 0.55s ease;
+}
+
+.win-msg{
+    color:#d4af37;
+    text-shadow:0 0 12px rgba(212,175,55,0.25);
+}
+
+@keyframes coinRise{
+    0%{
+        transform:translateY(0) scale(1);
+    }
+    12%{
+        transform:translateY(-18px) scale(1.01);
+    }
+    24%{
+        transform:translateY(-38px) scale(1.02);
+    }
+    40%{
+        transform:translateY(-58px) scale(1.03);
+    }
+    60%{
+        transform:translateY(-48px) scale(1.025);
+    }
+    78%{
+        transform:translateY(-22px) scale(1.01);
+    }
+    100%{
+        transform:translateY(0) scale(1);
+    }
+}
+
+@keyframes resultHit{
+    0%{
+        transform:scale(0.96);
+        opacity:0.5;
+    }
+    55%{
+        transform:scale(1.04);
+        opacity:1;
+    }
+    100%{
+        transform:scale(1);
+    }
+}
+</style>
 </head>
+
 <body>
 
-    <h1>Peaky BlInders Usulü</h1>
-    <div class="rules">
-        <p><strong>Kural:</strong> İki para atılacak.</p>
-        <small>Oyuncu 1: İkisi de AYNI gelirse kazanır.<br>Oyuncu 2: İkisi FARKLI gelirse kazanır.</small>
-    </div>
+<h1>Peaky Blinders Usulü</h1>
 
-    <div class="game-container">
+<div class="rules">
+    <p><strong>Kural:</strong> İki para atılır.</p>
+    <small>Oyuncu 1: Aynı gelirse kazanır<br>
+    Oyuncu 2: Farklı gelirse kazanır</small>
+</div>
+
+<div class="game-container">
+
+    <div class="coin-wrap" id="wrap1">
         <div class="coin" id="coin1">
             <img src="https://upload.wikimedia.org/wikipedia/commons/c/cd/1TL_reverse.png" class="heads" alt="Tura">
             <img src="https://upload.wikimedia.org/wikipedia/commons/6/64/1TL_obverse.png" class="tails" alt="Yazı">
         </div>
+        <div class="coin-glow"></div>
+    </div>
 
+    <div class="coin-wrap" id="wrap2">
         <div class="coin" id="coin2">
             <img src="https://upload.wikimedia.org/wikipedia/commons/c/cd/1TL_reverse.png" class="heads" alt="Tura">
             <img src="https://upload.wikimedia.org/wikipedia/commons/6/64/1TL_obverse.png" class="tails" alt="Yazı">
         </div>
+        <div class="coin-glow"></div>
     </div>
 
-    <p id="result">Bahisler Hazır mı?</p>
-    <button id="flip-btn" onclick="flipCoins()">YAZI TURA AT</button>
+</div>
 
-    <script>
-        const coin1 = document.getElementById('coin1');
-        const coin2 = document.getElementById('coin2');
-        const resultText = document.getElementById('result');
-        const button = document.getElementById('flip-btn');
+<p id="result">Bahisler hazır mı?</p>
 
-        function flipCoins() {
-            button.disabled = true;
-            resultText.textContent = "Paralar dönüyor...";
-            resultText.className = "";
+<button id="flip-btn" onclick="flipCoins()">YAZI TURA AT</button>
 
-            // --- ADIM 1: SIFIRLAMA (RESET) ---
-            // Önce animasyonu kapatıyoruz ve paraları 0 dereceye (başlangıca) çekiyoruz.
-            coin1.style.transition = "none";
-            coin2.style.transition = "none";
-            coin1.style.transform = "rotateY(0deg)";
-            coin2.style.transform = "rotateY(0deg)";
+<script>
+const coin1 = document.getElementById("coin1");
+const coin2 = document.getElementById("coin2");
+const wrap1 = document.getElementById("wrap1");
+const wrap2 = document.getElementById("wrap2");
+const resultText = document.getElementById("result");
+const button = document.getElementById("flip-btn");
 
-            // --- ADIM 2: TARAYICIYI TETİKLEME ---
-            // Bu kod (offsetWidth), tarayıcının sıfırlamayı algılaması için gerekli küçük bir hiledir.
-            // Bunu yapmazsak tarayıcı 0'a döndüğünü görmeden direkt yeni dönmeye geçer ve hata olur.
-            void coin1.offsetWidth;
-            void coin2.offsetWidth;
+let audioCtx = null;
 
-            // --- ADIM 3: SONUÇLARI BELİRLEME ---
-            const result1 = Math.floor(Math.random() * 2); // 0: Tura, 1: Yazı
-            const result2 = Math.floor(Math.random() * 2);
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+    }
+}
 
-            // --- ADIM 4: YENİ DÖNÜŞ HESABI ---
-            // Her seferinde 0'dan başladığımız için artık kümülatif toplamaya gerek yok.
-            // Sabit 1800 (5 tur) + Sonuç Açısı + Rastgele ekstra 1-2 tur (gerçekçilik için)
-            const rotation1 = 1800 + (result1 * 180) + (Math.floor(Math.random() * 4) * 360); 
-            const rotation2 = 1800 + (result2 * 180) + (Math.floor(Math.random() * 4) * 360); 
+function playMetalTick(time, frequency = 1800, duration = 0.035, volume = 0.035) {
+    if (!audioCtx) return;
 
-            // --- ADIM 5: ANİMASYONU BAŞLATMA ---
-            // Animasyonu geri açıyoruz
-            coin1.style.transition = "transform 3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
-            coin2.style.transition = "transform 3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
-            
-            // Yeni açılara döndür
-            coin1.style.transform = `rotateY(${rotation1}deg)`;
-            coin2.style.transform = `rotateY(${rotation2}deg)`;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    const filter = audioCtx.createBiquadFilter();
 
-            // --- ADIM 6: SONUÇ YAZDIRMA ---
-            setTimeout(() => {
-                const text1 = result1 === 0 ? "TURA" : "YAZI";
-                const text2 = result2 === 0 ? "TURA" : "YAZI";
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(frequency, time);
+    osc.frequency.exponentialRampToValueAtTime(Math.max(300, frequency * 0.45), time + duration);
 
-                let outcome = "";
-                
-                if (result1 === result2) {
-                    outcome = `SONUÇ: <span class="win-msg">AYNI GELDİ! (${text1} - ${text2})</span>`;
-                } else {
-                    outcome = `SONUÇ: <span class="win-msg">FARKLI GELDİ! (${text1} - ${text2})</span>`;
-                }
+    filter.type = "bandpass";
+    filter.frequency.setValueAtTime(1400, time);
+    filter.Q.setValueAtTime(5, time);
 
-                resultText.innerHTML = outcome;
-                button.disabled = false;
-                
-            }, 3000);
+    gain.gain.setValueAtTime(0.0001, time);
+    gain.gain.exponentialRampToValueAtTime(volume, time + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start(time);
+    osc.stop(time + duration + 0.01);
+}
+
+function playFlipSequence() {
+    if (!audioCtx) return;
+
+    const now = audioCtx.currentTime + 0.02;
+
+    playMetalTick(now + 0.00, 2200, 0.025, 0.020);
+    playMetalTick(now + 0.18, 1700, 0.030, 0.025);
+    playMetalTick(now + 0.42, 1400, 0.035, 0.028);
+    playMetalTick(now + 0.82, 1200, 0.040, 0.024);
+    playMetalTick(now + 1.30, 900, 0.045, 0.020);
+}
+
+function playFinalClink() {
+    if (!audioCtx) return;
+
+    const now = audioCtx.currentTime + 0.01;
+    playMetalTick(now, 950, 0.06, 0.045);
+    playMetalTick(now + 0.025, 1250, 0.04, 0.025);
+}
+
+function restartWrapAnimation(el) {
+    el.classList.remove("flipping");
+    void el.offsetWidth;
+    el.classList.add("flipping");
+}
+
+function flipCoins() {
+    initAudio();
+
+    button.disabled = true;
+    resultText.textContent = "Paralar havada dönüyor...";
+    resultText.className = "";
+
+    coin1.style.transition = "none";
+    coin2.style.transition = "none";
+
+    coin1.style.transform = "rotateY(0deg)";
+    coin2.style.transform = "rotateY(0deg)";
+
+    wrap1.classList.remove("flipping");
+    wrap2.classList.remove("flipping");
+
+    void coin1.offsetWidth;
+    void coin2.offsetWidth;
+
+    restartWrapAnimation(wrap1);
+    restartWrapAnimation(wrap2);
+
+    const result1 = Math.floor(Math.random() * 2);
+    const result2 = Math.floor(Math.random() * 2);
+
+    const rotation1 = 4680 + (result1 * 180) + (Math.floor(Math.random() * 5) * 360);
+    const rotation2 = 4680 + (result2 * 180) + (Math.floor(Math.random() * 5) * 360);
+
+    coin1.style.transition = "transform 6s cubic-bezier(.08,.75,.12,1)";
+    coin2.style.transition = "transform 6s cubic-bezier(.08,.75,.12,1)";
+
+    playFlipSequence();
+
+    coin1.style.transform = `rotateY(${rotation1}deg)`;
+    coin2.style.transform = `rotateY(${rotation2}deg)`;
+
+    setTimeout(() => {
+        playFinalClink();
+
+        const text1 = result1 === 0 ? "TURA" : "YAZI";
+        const text2 = result2 === 0 ? "TURA" : "YAZI";
+
+        let outcome = "";
+
+        if (result1 === result2) {
+            outcome = `SONUÇ: <span class="win-msg">AYNI GELDİ (${text1} - ${text2})</span>`;
+        } else {
+            outcome = `SONUÇ: <span class="win-msg">FARKLI GELDİ (${text1} - ${text2})</span>`;
         }
-    </script>
+
+        resultText.innerHTML = outcome;
+        resultText.classList.add("result-hit");
+        button.disabled = false;
+    }, 6000);
+}
+</script>
+
 </body>
 </html>
